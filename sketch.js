@@ -115,26 +115,26 @@ function drawPrintingUI() {
   
   fill(0);
   textStyle(BOLD);
-  textSize(38);
-  text("Printing your memories...", cx, cy - 180);
+  textSize(44);
+  text("Printing your memories...", cx, cy - 200);
   
   textStyle(NORMAL);
-  textSize(20);
+  textSize(22);
   fill(80, pulse); 
-  text("Please collect your prints in 2 mins", cx, cy - 140);
+  text("Please collect your prints in 2 mins", cx, cy - 155);
   
   if (isUploading) {
     fill(themeColor);
-    textSize(18);
+    textSize(19);
     textStyle(BOLD);
-    text("Generating your digital copy... ☁️", cx, cy - 10);
+    text("Generating your digital copy... ☁️", cx, cy - 15);
     textStyle(NORMAL);
   } else if (uploadError) {
     if (millis() - qrLastTime >= 1000) { qrTimer--; qrLastTime = millis(); if (qrTimer <= 0) resetBooth(); }
     
     fill('#FF3B30');
-    textSize(18);
-    text(`Oops, couldn't connect. Resetting in ${qrTimer}s...`, cx, cy - 10);
+    textSize(19);
+    text(`Oops, couldn't connect. Resetting in ${qrTimer}s...`, cx, cy - 15);
   } else if (qrImage) {
     if (millis() - qrLastTime >= 1000) { qrTimer--; qrLastTime = millis(); if (qrTimer <= 0) resetBooth(); }
 
@@ -142,46 +142,46 @@ function drawPrintingUI() {
     noStroke();
     drawingContext.shadowBlur = 30;
     drawingContext.shadowColor = 'rgba(0,0,0,0.1)';
-    rect(cx - 90, cy - 100, 180, 180, 20);
+    rect(cx - 100, cy - 110, 200, 200, 20);
     drawingContext.shadowBlur = 0;
     
-    image(qrImage, cx - 80, cy - 90, 160, 160);
+    image(qrImage, cx - 90, cy - 100, 180, 180);
     
-    textSize(16);
+    textSize(17);
     fill(themeColor);
     textStyle(BOLD);
-    text(`Scan to download! (${qrTimer}s) 📸`, cx, cy + 110);
+    text(`Scan to download! (${qrTimer}s) 📸`, cx, cy + 120);
     textStyle(NORMAL);
   }
 
-  let btnW = 180;
-  let btnH = 50;
+  let btnW = 190;
+  let btnH = 55;
   let bx = cx - btnW/2;
-  let by = cy + 150;
+  let by = cy + 165;
   
   drawingContext.shadowBlur = 15;
   drawingContext.shadowColor = 'rgba(255, 82, 139, 0.3)';
   fill(themeColor);
   noStroke();
-  rect(bx, by, btnW, btnH, 25);
+  rect(bx, by, btnW, btnH, 28);
   drawingContext.shadowBlur = 0;
   
   fill(255);
-  textSize(18);
+  textSize(19);
   textStyle(BOLD);
   text("DONE", cx, by + btnH/2);
   textStyle(NORMAL);
 
-  textSize(16);
+  textSize(17);
   fill(100); 
-  text("Choose a surprise at the counter 🎟️", cx, cy + 230);
+  text("Choose a surprise at the counter 🎟️", cx, cy + 255);
 }
 
 function drawBoothLayout() {
-  let camW = min(width * 0.42, 550); 
+  let camW = min(width * 0.44, 620); 
   let camH = camW / targetRatio; 
   let camX = (width * 0.62 - camW) / 2; 
-  let camY = height * 0.12; 
+  let camY = height * 0.10; 
 
   drawingContext.shadowBlur = 25;
   drawingContext.shadowColor = 'rgba(0,0,0,0.1)';
@@ -208,8 +208,8 @@ function drawBoothLayout() {
   }
 
   if (stage === 'IDLE') {
-    drawFilterPills(camX, camY + camH + 35, camW);
-    drawStartButton(camX, camY + camH + 105, camW);
+    drawFilterPills(camX, camY + camH + 45, camW);
+    drawStartButton(camX, camY + camH + 125, camW);
   }
 
   if (stage === 'COUNTDOWN') {
@@ -217,7 +217,7 @@ function drawBoothLayout() {
     handleSequence();
   }
   
-  drawStripByContext(width * 0.80, height * 0.05, width * 0.15, height * 0.9, 0.88, '#ffffff', "LIVE_SIDEBAR");
+  drawStripByContext(width * 0.81, height * 0.05, width * 0.145, height * 0.9, 0.88, '#ffffff', "LIVE_SIDEBAR");
 }
 
 function drawDoodleTransition(cx, cy) {
@@ -228,8 +228,8 @@ function drawDoodleTransition(cx, cy) {
   noStroke();
   textAlign(CENTER, CENTER);
   textStyle(BOLD);
-  textSize(28);
-  text("Developing your frames...", cx, cy - 180); 
+  textSize(30);
+  text("Developing your frames...", cx, cy - 190); 
   textStyle(NORMAL);
 
   drawingContext.save();
@@ -272,7 +272,7 @@ function drawDoodleTransition(cx, cy) {
 }
 
 function drawEditorLayout() {
-  let pH = min(height * 0.80, 680); 
+  let pH = min(height * 0.88, 820); 
   let pW = pH * (340 / 920); 
   let pX = (width * 0.42) - (pW / 2); 
   let pY = (height - pH) / 2;
@@ -283,20 +283,20 @@ function drawEditorLayout() {
 
 function drawLightEditorUI() {
   let uiX = width * 0.68;
-  let uiY = height * 0.08; 
-  let panelH = min(height * 0.60, 480);
+  let uiY = height * 0.10; 
+  let panelH = min(height * 0.72, 540);
   
   fill(255);
   drawingContext.shadowBlur = 40;
   drawingContext.shadowColor = 'rgba(0,0,0,0.08)'; 
-  rect(uiX - 30, uiY, 300, panelH, 30); 
+  rect(uiX - 30, uiY, 310, panelH, 35); 
   drawingContext.shadowBlur = 0;
 
   fill(0);
   textAlign(LEFT, TOP);
-  textSize(16);
+  textSize(17);
   textStyle(BOLD);
-  text("STYLE YOUR STRIP", uiX, uiY + 25);
+  text("STYLE YOUR STRIP", uiX, uiY + 30);
   
   let colors = [
     '#000000', '#1C2A44', '#6E1F2A', 
@@ -307,57 +307,57 @@ function drawLightEditorUI() {
     'Pure White', 'Pale Lemon', 'Sky Blue', 'Blush Pink'
   ];
   
-  let itemSpacing = (panelH - 90) / 7;
+  let itemSpacing = (panelH - 100) / 7;
   for (let i = 0; i < 7; i++) {
-    let sx = uiX + 20;
-    let sy = uiY + 70 + (i * itemSpacing); 
+    let sx = uiX + 22;
+    let sy = uiY + 75 + (i * itemSpacing); 
     let isSelected = activeColor === colors[i];
     
     if (isSelected) {
       noFill();
       stroke(themeColor);
       strokeWeight(3);
-      ellipse(sx, sy, 38, 38); 
+      ellipse(sx, sy, 46, 46); 
     }
     
     noStroke();
     fill(colors[i]);
     stroke(230); 
     strokeWeight(1);
-    ellipse(sx, sy, 30, 30); 
+    ellipse(sx, sy, 36, 36); 
     
     noStroke();
     fill(isSelected ? themeColor : 100);
     textAlign(LEFT, CENTER);
-    textSize(14);
-    text(labels[i], sx + 32, sy);
+    textSize(15);
+    text(labels[i], sx + 38, sy);
   }
 
-  let btnY1 = uiY + panelH + 20;
+  let btnY1 = uiY + panelH + 15;
   let btnY2 = btnY1 + 60;
 
   if (!retakeUsed) {
     fill(255);
     stroke(themeColor);
     strokeWeight(2);
-    rect(uiX - 5, btnY1, 250, 50, 25);
+    rect(uiX - 5, btnY1, 250, 58, 28);
     fill(themeColor);
     noStroke();
     textAlign(CENTER, CENTER);
-    textSize(16);
+    textSize(17);
     textStyle(BOLD);
-    text("RETAKE PHOTOS", uiX + 120, btnY1 + 25);
+    text("RETAKE PHOTOS", uiX + 120, btnY1 + 29);
     textStyle(NORMAL);
   }
   
   fill(themeColor);
   noStroke();
-  rect(uiX - 5, btnY2, 250, 50, 25);
+  rect(uiX - 5, btnY2, 250, 58, 28);
   fill(255);
   textAlign(CENTER, CENTER);
-  textSize(18);
+  textSize(19);
   textStyle(BOLD);
-  text("FINISH & PRINT", uiX + 120, btnY2 + 25);
+  text("FINISH & PRINT", uiX + 120, btnY2 + 29);
   textStyle(NORMAL);
 }
 
@@ -505,21 +505,21 @@ function finishSession() {
 }
 
 function drawFilterPills(x, y, w) {
-  let gap = 12; let btnW = (w - (gap * 3)) / 4; let btnH = 42;
-  textAlign(CENTER, CENTER); textSize(15); textStyle(BOLD); fill(0); text("Choose a filter", x + w/2, y - 20);
+  let gap = 14; let btnW = (w - (gap * 3)) / 4; let btnH = 45;
+  textAlign(CENTER, CENTER); textSize(15); textStyle(BOLD); fill(0); text("Choose a filter", x + w/2, y - 22);
   for (let i = 0; i < filterButtons.length; i++) {
     let bx = x + (i * (btnW + gap)); let isSelected = activeFilter === filterButtons[i].type;
-    if (isSelected) { drawingContext.shadowBlur = 15; drawingContext.shadowColor = 'rgba(255, 82, 139, 0.4)'; fill(themeColor); noStroke(); rect(bx, y, btnW, btnH, 20); drawingContext.shadowBlur = 0; fill(255); } 
-    else { fill(255); stroke(0); strokeWeight(2); rect(bx, y, btnW, btnH, 20); fill(0); }
+    if (isSelected) { drawingContext.shadowBlur = 15; drawingContext.shadowColor = 'rgba(255, 82, 139, 0.4)'; fill(themeColor); noStroke(); rect(bx, y, btnW, btnH, 22); drawingContext.shadowBlur = 0; fill(255); } 
+    else { fill(255); stroke(0); strokeWeight(2); rect(bx, y, btnW, btnH, 22); fill(0); }
     noStroke(); text(filterButtons[i].label, bx + btnW/2, y + btnH/2);
   } textStyle(NORMAL);
 }
 
 function drawStartButton(x, y, w) {
-  let btnW = w * 0.65; let btnH = 60; let bx = x + (w - btnW) / 2;
+  let btnW = w * 0.65; let btnH = 68; let bx = x + (w - btnW) / 2;
   drawingContext.shadowBlur = 20; drawingContext.shadowColor = 'rgba(255, 82, 139, 0.3)';
-  fill(themeColor); noStroke(); rect(bx, y, btnW, btnH, 30); drawingContext.shadowBlur = 0;
-  fill(255); textAlign(CENTER, CENTER); textSize(20); textStyle(BOLD); text("Start Capture", bx + btnW/2, y + btnH/2); textStyle(NORMAL);
+  fill(themeColor); noStroke(); rect(bx, y, btnW, btnH, 35); drawingContext.shadowBlur = 0;
+  fill(255); textAlign(CENTER, CENTER); textSize(22); textStyle(BOLD); text("Start Capture", bx + btnW/2, y + btnH/2); textStyle(NORMAL);
 }
 
 function drawCountdownUI(x, y, w, h) {
@@ -559,49 +559,49 @@ function mousePressed() {
   let cy = height / 2;
 
   if (stage === 'PRINTING') {
-    let btnW = 180;
-    let btnH = 50;
+    let btnW = 190;
+    let btnH = 55;
     let bx = cx - btnW/2;
-    let by = cy + 150; 
+    let by = cy + 165; 
     if (mouseX > bx && mouseX < bx + btnW && mouseY > by && mouseY < by + btnH) {
       resetBooth(); 
       return;
     }
   }
 
-  let camW = min(width * 0.42, 550); let camH = camW / targetRatio;
-  let camX = (width * 0.62 - camW) / 2; let camY = height * 0.12;
+  let camW = min(width * 0.44, 620); let camH = camW / targetRatio;
+  let camX = (width * 0.62 - camW) / 2; let camY = height * 0.10;
   
   if (stage === 'IDLE') {
-    let gap = 12; let btnW = (camW - (gap * 3)) / 4; 
-    let fy = camY + camH + 35; 
+    let gap = 14; let btnW = (camW - (gap * 3)) / 4; 
+    let fy = camY + camH + 45; 
     for (let i = 0; i < filterButtons.length; i++) {
       let bx = camX + (i * (btnW + gap));
-      if (mouseX > bx && mouseX < bx + btnW && mouseY > fy && mouseY < fy + 42) { activeFilter = filterButtons[i].type; return; }
+      if (mouseX > bx && mouseX < bx + btnW && mouseY > fy && mouseY < fy + 45) { activeFilter = filterButtons[i].type; return; }
     }
-    let sBtnW = camW * 0.65; let sBtnH = 60; 
+    let sBtnW = camW * 0.65; let sBtnH = 68; 
     let sBx = camX + (camW - sBtnW) / 2; 
-    let sBy = camY + camH + 105; 
+    let sBy = camY + camH + 125; 
     if (mouseX > sBx && mouseX < sBx + sBtnW && mouseY > sBy && mouseY < sBy + sBtnH) { stage = 'COUNTDOWN'; photos = []; snapCount = 0; timer = 3; isReadyPhase = true; lastTime = millis(); }
   }
   
   if (stage === 'SELECT') {
     let uiX = width * 0.68;
-    let uiY = height * 0.08;
-    let panelH = min(height * 0.60, 480);
-    let itemSpacing = (panelH - 90) / 7;
+    let uiY = height * 0.10;
+    let panelH = min(height * 0.72, 540);
+    let itemSpacing = (panelH - 100) / 7;
     let colors = ['#000000', '#1C2A44', '#6E1F2A', '#FFFFFF', '#F6E58D', '#BFD7ED', '#FFD4DD'];
     
     for (let i=0; i<7; i++) {
-      let sx = uiX + 20; 
-      let sy = uiY + 70 + (i * itemSpacing);
-      if(dist(mouseX, mouseY, sx, sy) < 20) activeColor = colors[i];
+      let sx = uiX + 22; 
+      let sy = uiY + 75 + (i * itemSpacing);
+      if(dist(mouseX, mouseY, sx, sy) < 22) activeColor = colors[i];
     }
     
-    let btnY1 = uiY + panelH + 20;
+    let btnY1 = uiY + panelH + 15;
     let btnY2 = btnY1 + 60;
 
-    if(!retakeUsed && mouseX > uiX - 5 && mouseX < uiX + 245 && mouseY > btnY1 && mouseY < btnY1 + 50) {
+    if(!retakeUsed && mouseX > uiX - 5 && mouseX < uiX + 245 && mouseY > btnY1 && mouseY < btnY1 + 58) {
       retakeUsed = true; 
       stage = 'COUNTDOWN'; 
       photos = []; 
@@ -613,7 +613,7 @@ function mousePressed() {
       return; 
     }
 
-    if(mouseX > uiX - 5 && mouseX < uiX + 245 && mouseY > btnY2 && mouseY < btnY2 + 50) finishSession();
+    if(mouseX > uiX - 5 && mouseX < uiX + 245 && mouseY > btnY2 && mouseY < btnY2 + 58) finishSession();
   }
 }
 
