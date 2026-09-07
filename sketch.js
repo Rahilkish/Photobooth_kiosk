@@ -10,7 +10,7 @@ let socket;
 let isConnected = false;
 let capture;
 let stripBuffer;
-let cloudBuffer; // NEW: A dedicated canvas for formatting the phone download
+let cloudBuffer;
 let photos = [];
 let stage = 'IDLE'; 
 let timer = 3;
@@ -24,8 +24,8 @@ let retakeUsed = false;
 let qrImage = null;
 let isUploading = false;
 let uploadError = false;
-let qrTimer = 30; // 30-second countdown variable
-let qrLastTime = 0; // Tracks milliseconds for the countdown
+let qrTimer = 30; 
+let qrLastTime = 0; 
 
 // --- THEME & COLORS ---
 let themeColor = "#FF528B"; 
@@ -63,11 +63,9 @@ function setup() {
   capture = createCapture(constraints);
   capture.hide();
   
-  // High-res buffer for the physical printer
   stripBuffer = createGraphics(1200, 3600); 
   stripBuffer.pixelDensity(1); 
   
-  // Lower-res, 9:16 mobile-formatted buffer for the cloud/QR download
   cloudBuffer = createGraphics(1080, 1920);
   cloudBuffer.pixelDensity(1);
 }
@@ -117,79 +115,73 @@ function drawPrintingUI() {
   
   fill(0);
   textStyle(BOLD);
-  textSize(48);
-  text("Printing your memories...", cx, cy - 220);
+  textSize(38);
+  text("Printing your memories...", cx, cy - 180);
   
   textStyle(NORMAL);
-  textSize(24);
+  textSize(20);
   fill(80, pulse); 
-  text("Please collect your prints in 2 mins", cx, cy - 170);
+  text("Please collect your prints in 2 mins", cx, cy - 140);
   
-  // --- QR CODE DISPLAY & VISUAL TIMER LOGIC ---
   if (isUploading) {
     fill(themeColor);
-    textSize(20);
+    textSize(18);
     textStyle(BOLD);
-    text("Generating your digital copy... ☁️", cx, cy - 20);
+    text("Generating your digital copy... ☁️", cx, cy - 10);
     textStyle(NORMAL);
   } else if (uploadError) {
-    // Run an 8-second visual fallback timer if upload fails
     if (millis() - qrLastTime >= 1000) { qrTimer--; qrLastTime = millis(); if (qrTimer <= 0) resetBooth(); }
     
     fill('#FF3B30');
-    textSize(20);
-    text(`Oops, couldn't connect. Resetting in ${qrTimer}s...`, cx, cy - 20);
+    textSize(18);
+    text(`Oops, couldn't connect. Resetting in ${qrTimer}s...`, cx, cy - 10);
   } else if (qrImage) {
-    // Run the main 30-second visual timer
     if (millis() - qrLastTime >= 1000) { qrTimer--; qrLastTime = millis(); if (qrTimer <= 0) resetBooth(); }
 
     fill(255);
     noStroke();
     drawingContext.shadowBlur = 30;
     drawingContext.shadowColor = 'rgba(0,0,0,0.1)';
-    rect(cx - 110, cy - 120, 220, 220, 20);
+    rect(cx - 90, cy - 100, 180, 180, 20);
     drawingContext.shadowBlur = 0;
     
-    image(qrImage, cx - 100, cy - 110, 200, 200);
+    image(qrImage, cx - 80, cy - 90, 160, 160);
     
-    textSize(18);
+    textSize(16);
     fill(themeColor);
     textStyle(BOLD);
-    // Timer is visibly displayed to the user
-    text(`Scan to download! (${qrTimer}s) 📸`, cx, cy + 130);
+    text(`Scan to download! (${qrTimer}s) 📸`, cx, cy + 110);
     textStyle(NORMAL);
   }
 
-  // --- MANUAL DONE BUTTON ---
-  let btnW = 200;
-  let btnH = 60;
+  let btnW = 180;
+  let btnH = 50;
   let bx = cx - btnW/2;
-  let by = cy + 180;
+  let by = cy + 150;
   
   drawingContext.shadowBlur = 15;
   drawingContext.shadowColor = 'rgba(255, 82, 139, 0.3)';
   fill(themeColor);
   noStroke();
-  rect(bx, by, btnW, btnH, 30);
+  rect(bx, by, btnW, btnH, 25);
   drawingContext.shadowBlur = 0;
   
   fill(255);
-  textSize(20);
+  textSize(18);
   textStyle(BOLD);
   text("DONE", cx, by + btnH/2);
   textStyle(NORMAL);
 
-  // --- SURPRISE TEXT ---
-  textSize(18);
+  textSize(16);
   fill(100); 
-  text("Choose a surprise at the counter 🎟️", cx, cy + 280);
+  text("Choose a surprise at the counter 🎟️", cx, cy + 230);
 }
 
 function drawBoothLayout() {
-  let camW = width * 0.45; 
+  let camW = min(width * 0.42, 550); 
   let camH = camW / targetRatio; 
-  let camX = (width * 0.65 - camW) / 2; 
-  let camY = (height - camH) / 2 - 80; 
+  let camX = (width * 0.62 - camW) / 2; 
+  let camY = height * 0.12; 
 
   drawingContext.shadowBlur = 25;
   drawingContext.shadowColor = 'rgba(0,0,0,0.1)';
@@ -216,8 +208,8 @@ function drawBoothLayout() {
   }
 
   if (stage === 'IDLE') {
-    drawFilterPills(camX, camY + camH + 80, camW);
-    drawStartButton(camX, camY + camH + 170, camW);
+    drawFilterPills(camX, camY + camH + 35, camW);
+    drawStartButton(camX, camY + camH + 105, camW);
   }
 
   if (stage === 'COUNTDOWN') {
@@ -225,7 +217,7 @@ function drawBoothLayout() {
     handleSequence();
   }
   
-  drawStripByContext(width * 0.82, height * 0.05, width * 0.14, height * 0.9, 0.88, '#ffffff', "LIVE_SIDEBAR");
+  drawStripByContext(width * 0.80, height * 0.05, width * 0.15, height * 0.9, 0.88, '#ffffff', "LIVE_SIDEBAR");
 }
 
 function drawDoodleTransition(cx, cy) {
@@ -236,8 +228,8 @@ function drawDoodleTransition(cx, cy) {
   noStroke();
   textAlign(CENTER, CENTER);
   textStyle(BOLD);
-  textSize(32);
-  text("Developing your frames...", cx, cy - 200); 
+  textSize(28);
+  text("Developing your frames...", cx, cy - 180); 
   textStyle(NORMAL);
 
   drawingContext.save();
@@ -280,7 +272,8 @@ function drawDoodleTransition(cx, cy) {
 }
 
 function drawEditorLayout() {
-  let pW = 340; let pH = 920; 
+  let pH = min(height * 0.80, 680); 
+  let pW = pH * (340 / 920); 
   let pX = (width * 0.42) - (pW / 2); 
   let pY = (height - pH) / 2;
   
@@ -289,20 +282,21 @@ function drawEditorLayout() {
 }
 
 function drawLightEditorUI() {
-  let uiX = width * 0.70;
-  let uiY = height * 0.15; 
+  let uiX = width * 0.68;
+  let uiY = height * 0.08; 
+  let panelH = min(height * 0.60, 480);
   
   fill(255);
   drawingContext.shadowBlur = 40;
   drawingContext.shadowColor = 'rgba(0,0,0,0.08)'; 
-  rect(uiX - 30, uiY - 40, 320, 580, 40); 
+  rect(uiX - 30, uiY, 300, panelH, 30); 
   drawingContext.shadowBlur = 0;
 
   fill(0);
   textAlign(LEFT, TOP);
-  textSize(18);
+  textSize(16);
   textStyle(BOLD);
-  text("STYLE YOUR STRIP", uiX, uiY);
+  text("STYLE YOUR STRIP", uiX, uiY + 25);
   
   let colors = [
     '#000000', '#1C2A44', '#6E1F2A', 
@@ -313,53 +307,57 @@ function drawLightEditorUI() {
     'Pure White', 'Pale Lemon', 'Sky Blue', 'Blush Pink'
   ];
   
+  let itemSpacing = (panelH - 90) / 7;
   for (let i = 0; i < 7; i++) {
-    let sx = uiX + 25;
-    let sy = uiY + 70 + (i * 65); 
+    let sx = uiX + 20;
+    let sy = uiY + 70 + (i * itemSpacing); 
     let isSelected = activeColor === colors[i];
     
     if (isSelected) {
       noFill();
       stroke(themeColor);
       strokeWeight(3);
-      ellipse(sx, sy, 55, 55); 
+      ellipse(sx, sy, 38, 38); 
     }
     
     noStroke();
     fill(colors[i]);
     stroke(230); 
     strokeWeight(1);
-    ellipse(sx, sy, 45, 45); 
+    ellipse(sx, sy, 30, 30); 
     
     noStroke();
     fill(isSelected ? themeColor : 100);
     textAlign(LEFT, CENTER);
-    textSize(15);
-    text(labels[i], sx + 45, sy);
+    textSize(14);
+    text(labels[i], sx + 32, sy);
   }
+
+  let btnY1 = uiY + panelH + 20;
+  let btnY2 = btnY1 + 60;
 
   if (!retakeUsed) {
     fill(255);
     stroke(themeColor);
     strokeWeight(2);
-    rect(uiX - 5, height - 210, 250, 65, 33);
+    rect(uiX - 5, btnY1, 250, 50, 25);
     fill(themeColor);
     noStroke();
     textAlign(CENTER, CENTER);
-    textSize(18);
+    textSize(16);
     textStyle(BOLD);
-    text("RETAKE PHOTOS", uiX + 120, height - 177);
+    text("RETAKE PHOTOS", uiX + 120, btnY1 + 25);
     textStyle(NORMAL);
   }
   
   fill(themeColor);
   noStroke();
-  rect(uiX - 5, height - 130, 250, 65, 33);
+  rect(uiX - 5, btnY2, 250, 50, 25);
   fill(255);
   textAlign(CENTER, CENTER);
-  textSize(20);
+  textSize(18);
   textStyle(BOLD);
-  text("FINISH & PRINT", uiX + 120, height - 97);
+  text("FINISH & PRINT", uiX + 120, btnY2 + 25);
   textStyle(NORMAL);
 }
 
@@ -418,7 +416,6 @@ function drawStripByContext(x, y, w, h, photoScale, currentBg, context) {
   textStyle(NORMAL);
 }
 
-// --- GLOBAL RESET FUNCTION ---
 function resetBooth() {
   stage = 'IDLE'; 
   photos = []; 
@@ -427,11 +424,10 @@ function resetBooth() {
   retakeUsed = false; 
   qrImage = null;
   isUploading = false;
-  qrTimer = 30; // reset for next person
+  qrTimer = 30; 
 }
 
 function finishSession() {
-  // 1. Draw out the high-res physical print strip
   stripBuffer.background(activeColor);
   let w = stripBuffer.width; let h = stripBuffer.height;
   let imgW = w * 0.90; let imgH = imgW / targetRatio;
@@ -452,16 +448,13 @@ function finishSession() {
 
   stage = 'PRINTING'; 
 
-  // 2. Format a gorgeous Presentation Card for the mobile web download
   if (CLOUD_NAME && UPLOAD_PRESET) {
     isUploading = true;
     qrImage = null;
     uploadError = false;
 
-    // Fill phone background with a soft pastel pink
     cloudBuffer.background('#FFE4E1'); 
     
-    // Scale the strip down to fit elegantly inside the phone screen
     let cbW = cloudBuffer.width;
     let cbH = cloudBuffer.height;
     let pTop = 150; 
@@ -469,7 +462,6 @@ function finishSession() {
     let scaledH = cbH - pTop - pBottom; 
     let scaledW = scaledH / 3; 
 
-    // Add a premium drop shadow specifically for the digital upload
     cloudBuffer.drawingContext.shadowBlur = 50;
     cloudBuffer.drawingContext.shadowColor = 'rgba(0,0,0,0.3)';
     cloudBuffer.drawingContext.shadowOffsetY = 20;
@@ -479,7 +471,6 @@ function finishSession() {
     cloudBuffer.drawingContext.shadowBlur = 0;
     cloudBuffer.drawingContext.shadowOffsetY = 0;
 
-    // Compress it significantly (.60) to speed up upload times to under 3 seconds!
     let webImage = cloudBuffer.canvas.toDataURL('image/jpeg', 0.60);
     
     let url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
@@ -494,7 +485,7 @@ function finishSession() {
           let qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=0&data=${encodeURIComponent(data.secure_url)}`;
           qrImage = loadImage(qrUrl, () => {
              isUploading = false;
-             qrTimer = 30; // Start the exact 30s visual countdown
+             qrTimer = 30; 
              qrLastTime = millis();
           });
         } else {
@@ -508,28 +499,27 @@ function finishSession() {
         qrTimer = 8; qrLastTime = millis();
       });
   } else {
-    // If you deactivate Cloudinary config at the top, just run a visual 10s timer
     uploadError = true; isUploading = false;
     qrTimer = 10; qrLastTime = millis();
   }
 }
 
 function drawFilterPills(x, y, w) {
-  let gap = 15; let btnW = (w - (gap * 3)) / 4; let btnH = 48;
-  textAlign(CENTER, CENTER); textSize(16); textStyle(BOLD); fill(0); text("Choose a filter", x + w/2, y - 25);
+  let gap = 12; let btnW = (w - (gap * 3)) / 4; let btnH = 42;
+  textAlign(CENTER, CENTER); textSize(15); textStyle(BOLD); fill(0); text("Choose a filter", x + w/2, y - 20);
   for (let i = 0; i < filterButtons.length; i++) {
     let bx = x + (i * (btnW + gap)); let isSelected = activeFilter === filterButtons[i].type;
-    if (isSelected) { drawingContext.shadowBlur = 15; drawingContext.shadowColor = 'rgba(255, 82, 139, 0.4)'; fill(themeColor); noStroke(); rect(bx, y, btnW, btnH, 25); drawingContext.shadowBlur = 0; fill(255); } 
-    else { fill(255); stroke(0); strokeWeight(2); rect(bx, y, btnW, btnH, 25); fill(0); }
+    if (isSelected) { drawingContext.shadowBlur = 15; drawingContext.shadowColor = 'rgba(255, 82, 139, 0.4)'; fill(themeColor); noStroke(); rect(bx, y, btnW, btnH, 20); drawingContext.shadowBlur = 0; fill(255); } 
+    else { fill(255); stroke(0); strokeWeight(2); rect(bx, y, btnW, btnH, 20); fill(0); }
     noStroke(); text(filterButtons[i].label, bx + btnW/2, y + btnH/2);
   } textStyle(NORMAL);
 }
 
 function drawStartButton(x, y, w) {
-  let btnW = w * 0.65; let btnH = 75; let bx = x + (w - btnW) / 2;
+  let btnW = w * 0.65; let btnH = 60; let bx = x + (w - btnW) / 2;
   drawingContext.shadowBlur = 20; drawingContext.shadowColor = 'rgba(255, 82, 139, 0.3)';
-  fill(themeColor); noStroke(); rect(bx, y, btnW, btnH, 40); drawingContext.shadowBlur = 0;
-  fill(255); textAlign(CENTER, CENTER); textSize(24); textStyle(BOLD); text("Start Capture", bx + btnW/2, y + btnH/2); textStyle(NORMAL);
+  fill(themeColor); noStroke(); rect(bx, y, btnW, btnH, 30); drawingContext.shadowBlur = 0;
+  fill(255); textAlign(CENTER, CENTER); textSize(20); textStyle(BOLD); text("Start Capture", bx + btnW/2, y + btnH/2); textStyle(NORMAL);
 }
 
 function drawCountdownUI(x, y, w, h) {
@@ -568,43 +558,50 @@ function mousePressed() {
   let cx = width / 2;
   let cy = height / 2;
 
-  // --- HITBOX FOR "DONE" BUTTON ON FINAL SCREEN ---
   if (stage === 'PRINTING') {
-    let btnW = 200;
-    let btnH = 60;
+    let btnW = 180;
+    let btnH = 50;
     let bx = cx - btnW/2;
-    let by = cy + 180; 
+    let by = cy + 150; 
     if (mouseX > bx && mouseX < bx + btnW && mouseY > by && mouseY < by + btnH) {
       resetBooth(); 
       return;
     }
   }
 
-  let camW = width * 0.45; let camH = camW / targetRatio;
-  let camX = (width * 0.65 - camW) / 2; let camY = (height - camH) / 2 - 80;
+  let camW = min(width * 0.42, 550); let camH = camW / targetRatio;
+  let camX = (width * 0.62 - camW) / 2; let camY = height * 0.12;
   
   if (stage === 'IDLE') {
-    let gap = 15; let btnW = (camW - (gap * 3)) / 4; 
-    let fy = camY + camH + 80; 
+    let gap = 12; let btnW = (camW - (gap * 3)) / 4; 
+    let fy = camY + camH + 35; 
     for (let i = 0; i < filterButtons.length; i++) {
       let bx = camX + (i * (btnW + gap));
-      if (mouseX > bx && mouseX < bx + btnW && mouseY > fy && mouseY < fy + 48) { activeFilter = filterButtons[i].type; return; }
+      if (mouseX > bx && mouseX < bx + btnW && mouseY > fy && mouseY < fy + 42) { activeFilter = filterButtons[i].type; return; }
     }
-    let sBtnW = camW * 0.65; let sBtnH = 75; 
+    let sBtnW = camW * 0.65; let sBtnH = 60; 
     let sBx = camX + (camW - sBtnW) / 2; 
-    let sBy = camY + camH + 170; 
+    let sBy = camY + camH + 105; 
     if (mouseX > sBx && mouseX < sBx + sBtnW && mouseY > sBy && mouseY < sBy + sBtnH) { stage = 'COUNTDOWN'; photos = []; snapCount = 0; timer = 3; isReadyPhase = true; lastTime = millis(); }
   }
   
   if (stage === 'SELECT') {
-    let uiX = width * 0.70; let uiY = height * 0.15;
+    let uiX = width * 0.68;
+    let uiY = height * 0.08;
+    let panelH = min(height * 0.60, 480);
+    let itemSpacing = (panelH - 90) / 7;
     let colors = ['#000000', '#1C2A44', '#6E1F2A', '#FFFFFF', '#F6E58D', '#BFD7ED', '#FFD4DD'];
+    
     for (let i=0; i<7; i++) {
-      let sx = uiX + 25; let sy = uiY + 70 + (i * 65);
-      if(dist(mouseX, mouseY, sx, sy) < 25) activeColor = colors[i];
+      let sx = uiX + 20; 
+      let sy = uiY + 70 + (i * itemSpacing);
+      if(dist(mouseX, mouseY, sx, sy) < 20) activeColor = colors[i];
     }
     
-    if(!retakeUsed && mouseX > uiX - 5 && mouseX < uiX + 245 && mouseY > height - 210 && mouseY < height - 145) {
+    let btnY1 = uiY + panelH + 20;
+    let btnY2 = btnY1 + 60;
+
+    if(!retakeUsed && mouseX > uiX - 5 && mouseX < uiX + 245 && mouseY > btnY1 && mouseY < btnY1 + 50) {
       retakeUsed = true; 
       stage = 'COUNTDOWN'; 
       photos = []; 
@@ -616,7 +613,7 @@ function mousePressed() {
       return; 
     }
 
-    if(mouseX > uiX - 5 && mouseX < uiX + 245 && mouseY > height - 130 && mouseY < height - 65) finishSession();
+    if(mouseX > uiX - 5 && mouseX < uiX + 245 && mouseY > btnY2 && mouseY < btnY2 + 50) finishSession();
   }
 }
 
